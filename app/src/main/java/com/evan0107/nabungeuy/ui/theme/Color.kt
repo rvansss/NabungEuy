@@ -1,4 +1,4 @@
-package com.evan0107.NabungEuy.ui.theme
+package com.evan0107.nabungeuy.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

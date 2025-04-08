@@ -1,4 +1,4 @@
-package com.evan0107.NabungEuy
+package com.evan0107.nabungeuy
 
 import org.junit.Test
 

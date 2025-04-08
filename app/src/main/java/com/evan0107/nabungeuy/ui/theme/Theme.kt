@@ -1,6 +1,5 @@
-package com.evan0107.NabungEuy.ui.theme
+package com.evan0107.nabungeuy.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
