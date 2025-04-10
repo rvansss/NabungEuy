@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.evan0107.NabungEuy"
+    namespace = "com.evan0107.nabungeuy"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.evan0107.NabungEuy"
+        applicationId = "com.evan0107.nabungeuy"
         minSdk = 23
         targetSdk = 35
         versionCode = 1
