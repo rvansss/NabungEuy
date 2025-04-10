@@ -5,10 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +35,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
@@ -49,27 +52,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NabungEuyTheme(darkTheme = isDarkMode) {
-                Scaffold(
-                    topBar =
-                    {
-                        TopBar(
-                            isDarkMode = isDarkMode,
-                            onToggleTheme = { isDarkMode = !isDarkMode }
-                        )
-                    },
-                    bottomBar =
-                    {
-                        BottomNavbar()
-                    }
-                ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        MainPerhitungan()
-                    }
-                }
+                AppNavigation(
+                    isDarkMode = isDarkMode,
+                    onToggleTheme = { isDarkMode = !isDarkMode }
+                )
             }
         }
     }
@@ -163,31 +149,89 @@ fun MainPerhitungan() {
 }
 
 @Composable
-fun BottomNavbar() {
-    var selectedIndex by remember { mutableStateOf(0) }
+fun BottomNavbar(navController: NavController) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
 
     NavigationBar(
         containerColor = Color(0xFFFFF0F0),
         tonalElevation = 8.dp
     ) {
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = "Gallery") },
-            selected = selectedIndex == 0,
-            onClick = { selectedIndex = 0 }
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            selected = currentRoute == "home",
+            onClick = {
+                if (currentRoute != "home") {
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Done, contentDescription = "Saving") },
-            selected = selectedIndex == 1,
-            onClick = { selectedIndex = 1 }
+            selected = currentRoute == "saving",
+            onClick = {
+                if (currentRoute != "saving") {
+                    navController.navigate("saving") {
+                        popUpTo("home")
+                        launchSingleTop = true
+                    }
+                }
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-            selected = selectedIndex == 2,
-            onClick = { selectedIndex = 2 }
+            selected = currentRoute == "profile",
+            onClick = {
+                if (currentRoute != "profile") {
+                    navController.navigate("profile") {
+                        popUpTo("home")
+                        launchSingleTop = true
+                    }
+                }
+            }
         )
     }
 }
 
+
+@Composable
+fun AppNavigation(
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit
+) {
+    val navController = rememberNavController()
+
+    Scaffold(
+        topBar = {
+            TopBar(
+                isDarkMode = isDarkMode,
+                onToggleTheme = onToggleTheme
+            )
+        },
+        bottomBar = {
+            BottomNavbar(navController)
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("home") {
+                MainPerhitungan()
+            }
+            composable("profile") {
+                ProfileScreen()
+            }
+            composable("saving") {
+                SavingScreen()
+            }
+        }
+    }
+}
 
 
 
