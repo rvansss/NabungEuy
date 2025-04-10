@@ -50,13 +50,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             NabungEuyTheme(darkTheme = isDarkMode) {
                 Scaffold(
-                    topBar = {
+                    topBar =
+                    {
                         TopBar(
                             isDarkMode = isDarkMode,
                             onToggleTheme = { isDarkMode = !isDarkMode }
                         )
                     },
-
+                    bottomBar =
+                    {
+                        BottomNavbar()
+                    }
                 ) { innerPadding ->
                     Box(
                         modifier = Modifier
@@ -155,6 +159,32 @@ fun MainPerhitungan() {
                 Text("Hitung")
             }
         }
+    }
+}
+
+@Composable
+fun BottomNavbar() {
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    NavigationBar(
+        containerColor = Color(0xFFFFF0F0),
+        tonalElevation = 8.dp
+    ) {
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = "Gallery") },
+            selected = selectedIndex == 0,
+            onClick = { selectedIndex = 0 }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Done, contentDescription = "Saving") },
+            selected = selectedIndex == 1,
+            onClick = { selectedIndex = 1 }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+            selected = selectedIndex == 2,
+            onClick = { selectedIndex = 2 }
+        )
     }
 }
 
