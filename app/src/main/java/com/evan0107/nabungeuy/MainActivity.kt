@@ -43,18 +43,24 @@ import androidx.navigation.compose.rememberNavController
 import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 class MainActivity : ComponentActivity() {
     private var isDarkMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
+            val savingViewModel: SavingViewModel = viewModel()
+
             NabungEuyTheme(darkTheme = isDarkMode) {
                 AppNavigation(
                     isDarkMode = isDarkMode,
-                    onToggleTheme = { isDarkMode = !isDarkMode }
+                    onToggleTheme = { isDarkMode = !isDarkMode },
+                    viewModel = savingViewModel
                 )
             }
         }
@@ -200,7 +206,8 @@ fun BottomNavbar(navController: NavController) {
 @Composable
 fun AppNavigation(
     isDarkMode: Boolean,
-    onToggleTheme: () -> Unit
+    onToggleTheme: () -> Unit,
+    viewModel: SavingViewModel
 ) {
     val navController = rememberNavController()
 
@@ -227,10 +234,10 @@ fun AppNavigation(
                 ProfileScreen()
             }
             composable("saving") {
-                SavingScreen(navController)
+                SavingScreen(navController,viewModel)
             }
             composable("form_input") {
-                FormInputScreen()
+                FormInputScreen(viewModel)
             }
         }
     }

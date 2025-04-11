@@ -5,19 +5,52 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun FormInputScreen() {
+fun FormInputScreen(viewModel: SavingViewModel) {
     var nama by remember { mutableStateOf("") }
     var harga by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
 
-        Text("Tambah Cita-Cita", style = MaterialTheme.typography.titleLarge)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text("Tambah Tabungan", fontWeight = FontWeight.Bold)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                if (nama.isNotBlank() && harga.isNotBlank()) {
+                    val item = CitaCitaItem(nama, harga, imageUri)
+                    viewModel.tambahData(item)
+
+                    // Reset form setelah simpan
+                    nama = ""
+                    harga = ""
+                    imageUri = null
+                }
+            },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text("Simpan")
+        }
 
         TextField(
             value = nama,
@@ -26,8 +59,6 @@ fun FormInputScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         TextField(
             value = harga,
             onValueChange = { harga = it },
@@ -35,12 +66,19 @@ fun FormInputScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text("Pilih Gambar")
+        }
 
-        Button(onClick = {
-            // Simpan logika simpan data di sini
-        }, modifier = Modifier.fillMaxWidth()) {
-            Text("Simpan")
+        imageUri?.let {
+            Image(
+                painter = rememberAsyncImagePainter(it),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
         }
     }
 }
+

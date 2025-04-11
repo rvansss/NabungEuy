@@ -46,37 +46,8 @@ data class CitaCitaItem(
 )
 
 @Composable
-fun SavingScreen(navController: NavController) {
-
-    // Data dummy
-    val context = LocalContext.current
-    val citaCitaList = remember { mutableStateListOf<CitaCitaItem>() }
-
-
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
-    }
-
-// Tambahkan beberapa data dummy jika kosong (hanya untuk awal)
-    LaunchedEffect(Unit) {
-        if (citaCitaList.isEmpty()) {
-            citaCitaList.addAll(
-                listOf(
-                    CitaCitaItem("Headphone", "1.500.000", null),
-                    CitaCitaItem("Laptop", "5.000.000", null),
-                    CitaCitaItem("Kamera", "3.000.000", null),
-                    CitaCitaItem("Mic Podcast", "2.500.000", null),
-                )
-            )
-        }
-    }
-
-
-
+fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
+    val citaCitaList = viewModel.listData
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -110,12 +81,18 @@ fun SavingScreen(navController: NavController) {
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.padding(8.dp)
                             ) {
+                                val painter = if (item.gambarUri != null) {
+                                    rememberAsyncImagePainter(item.gambarUri)
+                                } else {
+                                    painterResource(id = R.drawable.ic_launcher_foreground)
+                                }
+
                                 Image(
-                                    painter = item.gambarUri?.let { rememberAsyncImagePainter(it) }
-                                        ?: painterResource(id = R.drawable.ic_launcher_foreground), // fallback/default image
+                                    painter = painter,
                                     contentDescription = item.nama,
                                     modifier = Modifier.size(64.dp)
                                 )
+
 
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = item.nama, fontWeight = FontWeight.Bold)
@@ -137,6 +114,6 @@ fun SavingScreen(navController: NavController) {
         ) {
             Icon(Icons.Default.Create, contentDescription = "Tambah")
         }
-
     }
 }
+
