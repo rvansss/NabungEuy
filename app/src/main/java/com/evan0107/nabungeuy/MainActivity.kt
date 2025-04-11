@@ -227,7 +227,10 @@ fun AppNavigation(
                 ProfileScreen()
             }
             composable("saving") {
-                SavingScreen()
+                SavingScreen(navController)
+            }
+            composable("form_input") {
+                FormInputScreen()
             }
         }
     }

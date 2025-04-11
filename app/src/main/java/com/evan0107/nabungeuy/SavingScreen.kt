@@ -29,24 +29,54 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+
 
 
 data class CitaCitaItem(
     val nama: String,
     val harga: String,
-    val gambarRes: Int
+    val gambarUri: Uri?
 )
 
 @Composable
-fun SavingScreen() {
+fun SavingScreen(navController: NavController) {
 
     // Data dummy
-    val citaCitaList = listOf(
-        CitaCitaItem("Headphone", "1.500.000", R.drawable.ic_launcher_foreground),
-        CitaCitaItem("Laptop", "5.000.000", R.drawable.ic_launcher_foreground),
-        CitaCitaItem("Kamera", "3.000.000", R.drawable.ic_launcher_foreground),
-        CitaCitaItem("Mic Podcast", "2.500.000", R.drawable.ic_launcher_foreground)
-    )
+    val context = LocalContext.current
+    val citaCitaList = remember { mutableStateListOf<CitaCitaItem>() }
+
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
+
+// Tambahkan beberapa data dummy jika kosong (hanya untuk awal)
+    LaunchedEffect(Unit) {
+        if (citaCitaList.isEmpty()) {
+            citaCitaList.addAll(
+                listOf(
+                    CitaCitaItem("Headphone", "1.500.000", null),
+                    CitaCitaItem("Laptop", "5.000.000", null),
+                    CitaCitaItem("Kamera", "3.000.000", null),
+                    CitaCitaItem("Mic Podcast", "2.500.000", null),
+                )
+            )
+        }
+    }
+
+
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -81,10 +111,12 @@ fun SavingScreen() {
                                 modifier = Modifier.padding(8.dp)
                             ) {
                                 Image(
-                                    painter = painterResource(id = item.gambarRes),
+                                    painter = item.gambarUri?.let { rememberAsyncImagePainter(it) }
+                                        ?: painterResource(id = R.drawable.ic_launcher_foreground), // fallback/default image
                                     contentDescription = item.nama,
                                     modifier = Modifier.size(64.dp)
                                 )
+
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = item.nama, fontWeight = FontWeight.Bold)
                                 Text(text = item.harga)
@@ -97,7 +129,7 @@ fun SavingScreen() {
 
         // Tombol Tambah Data
         FloatingActionButton(
-            onClick = { /* Belum berfungsi, bisa diarahkan ke form input jika perlu */ },
+            onClick = { navController.navigate("form_input") },
             containerColor = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -105,5 +137,6 @@ fun SavingScreen() {
         ) {
             Icon(Icons.Default.Create, contentDescription = "Tambah")
         }
+
     }
 }
