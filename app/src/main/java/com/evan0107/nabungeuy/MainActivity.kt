@@ -224,9 +224,12 @@ fun AppNavigation(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "splash",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("splash") {
+                SplashScreen(navController)
+            }
             composable("home") {
                 MainPerhitungan()
             }
