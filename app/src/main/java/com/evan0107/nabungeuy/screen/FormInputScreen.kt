@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy
+package com.evan0107.nabungeuy.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,6 +12,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberAsyncImagePainter
+import com.evan0107.nabungeuy.model.CitaCita
 
 @Composable
 fun FormInputScreen(viewModel: SavingViewModel) {
@@ -36,7 +37,7 @@ fun FormInputScreen(viewModel: SavingViewModel) {
         Button(
             onClick = {
                 if (nama.isNotBlank() && harga.isNotBlank()) {
-                    val item = CitaCitaItem(nama, harga, imageUri)
+                    val item = CitaCita(nama, harga, imageUri)
                     viewModel.tambahData(item)
 
                     // Reset form setelah simpan

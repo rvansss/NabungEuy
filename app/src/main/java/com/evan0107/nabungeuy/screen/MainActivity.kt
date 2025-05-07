@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy
+package com.evan0107.nabungeuy.screen
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

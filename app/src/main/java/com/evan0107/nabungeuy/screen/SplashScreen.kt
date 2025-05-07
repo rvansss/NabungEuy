@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy
+package com.evan0107.nabungeuy.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.evan0107.nabungeuy.R
 import kotlinx.coroutines.delay
 
 @Composable

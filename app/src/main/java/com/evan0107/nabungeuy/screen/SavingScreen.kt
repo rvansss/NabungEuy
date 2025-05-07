@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy
+package com.evan0107.nabungeuy.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -29,17 +29,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
-import android.net.Uri
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.evan0107.nabungeuy.R
 
-
-
-data class CitaCitaItem(
-    val nama: String,
-    val harga: String,
-    val gambarUri: Uri?
-)
 
 @Composable
 fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
