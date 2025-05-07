@@ -68,7 +68,8 @@ fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
                                 .clickable {
-                                    navController.navigate("detail_screen/${item.nama}/${item.harga}")
+                                    viewModel.pilihItem(item)
+                                    navController.navigate("detail_screen")
                                 },
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {
@@ -77,18 +78,14 @@ fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.padding(8.dp)
                             ) {
-                                val painter = if (item.gambarUri != null) {
-                                    rememberAsyncImagePainter(item.gambarUri)
-                                } else {
-                                    painterResource(id = R.drawable.ic_launcher_foreground)
-                                }
+                                val painter = item.gambarUri?.let { rememberAsyncImagePainter(it) }
+                                    ?: painterResource(id = R.drawable.ic_launcher_foreground)
 
                                 Image(
                                     painter = painter,
                                     contentDescription = item.nama,
                                     modifier = Modifier.size(64.dp)
                                 )
-
 
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = item.nama, fontWeight = FontWeight.Bold)

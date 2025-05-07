@@ -1,5 +1,6 @@
 package com.evan0107.nabungeuy.screen
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -237,33 +238,32 @@ fun AppNavigation(
                 ProfileScreen()
             }
             composable("saving") {
-                SavingScreen(navController,viewModel)
+                SavingScreen(navController, viewModel)
             }
             composable("form_input") {
                 FormInputScreen(viewModel)
             }
-            composable("detail_screen/{nama}/{harga}") { backStackEntry ->
-                val nama = backStackEntry.arguments?.getString("nama") ?: ""
-                val harga = backStackEntry.arguments?.getString("harga") ?: ""
-                DetailScreen(nama = nama, harga = harga)
+            composable("detail_screen") {
+                DetailScreen(viewModel = viewModel)
             }
+
         }
     }
-}
 
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun TopBarPreview() {
-    // Gunakan remember agar bisa di-toggle di Compose Preview interaktif (kalau enabled)
-    val isDarkMode = remember { mutableStateOf(false) }
-
-    NabungEuyTheme {
-        TopBar(
-            isDarkMode = isDarkMode.value,
-            onToggleTheme = { isDarkMode.value = !isDarkMode.value }
-        )
-    }
+//    @Preview(showBackground = true)
+//    @Composable
+//    fun TopBarPreview() {
+//        // Gunakan remember agar bisa di-toggle di Compose Preview interaktif (kalau enabled)
+//        val isDarkMode = remember { mutableStateOf(false) }
+//
+//        NabungEuyTheme {
+//            TopBar(
+//                isDarkMode = isDarkMode.value,
+//                onToggleTheme = { isDarkMode.value = !isDarkMode.value }
+//            )
+//        }
+//    }
 }
