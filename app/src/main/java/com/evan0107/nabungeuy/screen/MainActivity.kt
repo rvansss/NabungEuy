@@ -242,6 +242,11 @@ fun AppNavigation(
             composable("form_input") {
                 FormInputScreen(viewModel)
             }
+            composable("detail_screen/{nama}/{harga}") { backStackEntry ->
+                val nama = backStackEntry.arguments?.getString("nama") ?: ""
+                val harga = backStackEntry.arguments?.getString("harga") ?: ""
+                DetailScreen(nama = nama, harga = harga)
+            }
         }
     }
 }

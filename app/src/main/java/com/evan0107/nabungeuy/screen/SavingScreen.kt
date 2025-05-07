@@ -30,6 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
 import androidx.navigation.NavController
+import androidx.compose.foundation.clickable
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.R
 
@@ -37,6 +40,7 @@ import com.evan0107.nabungeuy.R
 @Composable
 fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
     val citaCitaList = viewModel.listData
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -62,7 +66,10 @@ fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1f),
+                                .aspectRatio(1f)
+                                .clickable {
+                                    navController.navigate("detail_screen/${item.nama}/${item.harga}")
+                                },
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {
                             Column(
