@@ -31,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
 import androidx.navigation.NavController
 import androidx.compose.foundation.clickable
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.R
 
@@ -40,7 +38,6 @@ import com.evan0107.nabungeuy.R
 @Composable
 fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
     val citaCitaList = viewModel.listData
-    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {

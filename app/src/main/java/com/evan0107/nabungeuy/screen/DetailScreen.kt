@@ -1,6 +1,5 @@
 package com.evan0107.nabungeuy.screen
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(viewModel: SavingViewModel) {
     val item = viewModel.selectedItem
