@@ -1,9 +1,11 @@
 package com.evan0107.nabungeuy.screen
 
+import SavingViewModelFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,7 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.evan0107.nabungeuy.database.CitaCitaDb
 
 
 class MainActivity : ComponentActivity() {
@@ -53,13 +55,17 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val savingViewModel: SavingViewModel = viewModel()
+            val db = CitaCitaDb.getInstance(applicationContext)
+            val viewModel: SavingViewModel by viewModels {
+                SavingViewModelFactory(db.dao)
+            }
+
 
             NabungEuyTheme(darkTheme = isDarkMode) {
                 AppNavigation(
                     isDarkMode = isDarkMode,
                     onToggleTheme = { isDarkMode = !isDarkMode },
-                    viewModel = savingViewModel
+                    viewModel = viewModel
                 )
             }
         }

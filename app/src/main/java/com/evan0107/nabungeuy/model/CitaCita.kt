@@ -4,11 +4,11 @@ import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "citacita")
+@Entity(tableName = "citaCita")
 data class CitaCita(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    val id: Int = 0,
     val nama: String,
     val harga: String,
-    val gambarUri: Uri?
+    val gambarUri: Uri? = null
 )

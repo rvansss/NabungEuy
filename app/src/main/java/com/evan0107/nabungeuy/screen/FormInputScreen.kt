@@ -37,7 +37,10 @@ fun FormInputScreen(viewModel: SavingViewModel) {
         Button(
             onClick = {
                 if (nama.isNotBlank() && harga.isNotBlank()) {
-                    val item = CitaCita(nama, harga, imageUri)
+                    val item = CitaCita(
+                        nama = nama,
+                        harga = harga,
+                        gambarUri = imageUri)
                     viewModel.tambahData(item)
 
                     // Reset form setelah simpan

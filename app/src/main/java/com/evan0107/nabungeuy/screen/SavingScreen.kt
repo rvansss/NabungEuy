@@ -31,13 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
 import androidx.navigation.NavController
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.R
 
 
 @Composable
 fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
-    val citaCitaList = viewModel.listData
+    val citaCitaList by viewModel.listData.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {

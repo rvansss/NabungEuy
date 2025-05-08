@@ -1,21 +1,20 @@
 package com.evan0107.nabungeuy.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.evan0107.nabungeuy.model.CitaCita
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CitaCitaDao {
-    @Insert
-    suspend fun insert(citacita: CitaCita)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(citaCita: CitaCita)
 
-    @Update
-    suspend fun update(citacita: CitaCita)
-
-    @Query("SELECT * FROM citacita ORDER BY nama DESC")
+    @Query("SELECT * FROM CitaCita")
     fun getCitaCita(): Flow<List<CitaCita>>
 
+    @Query("SELECT * FROM CitaCita WHERE id = :id")
+    suspend fun getById(id: Int): CitaCita?
+
+    @Delete
+    suspend fun delete(citaCita: CitaCita)
 }
