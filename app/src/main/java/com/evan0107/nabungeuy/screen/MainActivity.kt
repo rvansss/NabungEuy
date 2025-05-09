@@ -7,22 +7,28 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -35,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -49,10 +56,10 @@ import com.evan0107.nabungeuy.saving.DetailScreen
 import com.evan0107.nabungeuy.saving.FormInputScreen
 import com.evan0107.nabungeuy.saving.SavingScreen
 import com.evan0107.nabungeuy.saving.SavingViewModel
+import com.evan0107.nabungeuy.ui.theme.AppTheme
 
 
 class MainActivity : ComponentActivity() {
-    private var isDarkMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,11 +71,12 @@ class MainActivity : ComponentActivity() {
                 SavingViewModelFactory(db.dao)
             }
 
+            var currentTheme by remember { mutableStateOf(AppTheme.LIGHT) }
 
-            NabungEuyTheme(darkTheme = isDarkMode) {
+            NabungEuyTheme(theme = currentTheme) {
                 AppNavigation(
-                    isDarkMode = isDarkMode,
-                    onToggleTheme = { isDarkMode = !isDarkMode },
+                    currentTheme = currentTheme,
+                    onThemeChange = { currentTheme = it },
                     viewModel = viewModel
                 )
             }
@@ -77,26 +85,45 @@ class MainActivity : ComponentActivity() {
 }
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(isDarkMode: Boolean, onToggleTheme: () -> Unit) {
+fun TopBar(currentTheme: AppTheme, onThemeChange: (AppTheme) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
     TopAppBar(
-//        backgroundColor = Color(0xFFFFF0F0),
-//        elevation = 2.dp,
-        title = {
-            Text("Van’s Tabungan", fontWeight = FontWeight.Bold)
-        },
+        title = { Text("Van’s Tabungan", fontWeight = FontWeight.Bold) },
         actions = {
-            Switch(
-                checked = isDarkMode,
-                onCheckedChange = { onToggleTheme() }
-            )
+            Box {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Pilih Tema",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    AppTheme.values().forEach { theme ->
+                        DropdownMenuItem(
+                            text = { Text(theme.name) },
+                            onClick = {
+                                onThemeChange(theme)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFFFFF0F0)
+            containerColor = MaterialTheme.colorScheme.primary
         )
     )
 }
+
 
 @Composable
 fun MainPerhitungan() {
@@ -119,6 +146,7 @@ fun MainPerhitungan() {
             value = danaTerkumpul,
             onValueChange = { danaTerkumpul = it },
             label = { Text("Terkumpul") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             singleLine = true
         )
 
@@ -128,20 +156,16 @@ fun MainPerhitungan() {
             value = danaKebutuhan,
             onValueChange = { danaKebutuhan = it },
             label = { Text("Kebutuhan") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             singleLine = true
         )
 
         Text("Dana Sisa", fontWeight = FontWeight.SemiBold)
-        TextField(
+        Text(
             modifier = Modifier.fillMaxWidth(),
-            value = danaSisa,
-            onValueChange = {},
-            label = { Text("Dana Sisa") },
-            readOnly = true,
-            singleLine = true
+            text = danaSisa,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
         )
-
-//        Spacer(modifier = Modifier.weight(1f)) // Dorong tombol ke bawah
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -151,10 +175,13 @@ fun MainPerhitungan() {
                 onClick = {
                     val terkumpul = danaTerkumpul.toFloatOrNull() ?: 0f
                     val kebutuhan = danaKebutuhan.toFloatOrNull() ?: 0f
-                    val sisa = terkumpul - kebutuhan
-
-                    val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) // Indonesia
-                    danaSisa = formatter.format(sisa)
+                    if (terkumpul < kebutuhan) {
+                        danaSisa = "Dana terkumpul tidak cukup"
+                    } else {
+                        val sisa = terkumpul - kebutuhan
+                        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                        danaSisa = formatter.format(sisa)
+                    }
                 }
             ) {
                 Text("Hitung")
@@ -163,13 +190,14 @@ fun MainPerhitungan() {
     }
 }
 
+
 @Composable
 fun BottomNavbar(navController: NavController) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     NavigationBar(
-        containerColor = Color(0xFFFFF0F0),
+        containerColor = MaterialTheme.colorScheme.primary, // Ganti dengan warna tema
         tonalElevation = 8.dp
     ) {
         NavigationBarItem(
@@ -212,10 +240,11 @@ fun BottomNavbar(navController: NavController) {
 }
 
 
+
 @Composable
 fun AppNavigation(
-    isDarkMode: Boolean,
-    onToggleTheme: () -> Unit,
+    currentTheme: AppTheme,
+    onThemeChange: (AppTheme) -> Unit,
     viewModel: SavingViewModel
 ) {
     val navController = rememberNavController()
@@ -223,8 +252,8 @@ fun AppNavigation(
     Scaffold(
         topBar = {
             TopBar(
-                isDarkMode = isDarkMode,
-                onToggleTheme = onToggleTheme
+                currentTheme = currentTheme,
+                onThemeChange = onThemeChange
             )
         },
         bottomBar = {
