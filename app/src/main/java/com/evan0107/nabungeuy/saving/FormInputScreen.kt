@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy.screen
+package com.evan0107.nabungeuy.saving
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,14 +11,31 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.model.CitaCita
 
 @Composable
-fun FormInputScreen(viewModel: SavingViewModel) {
+fun FormInputScreen(
+    navController: NavController,
+    viewModel: SavingViewModel,
+    itemId: Int?
+) {
     var nama by remember { mutableStateOf("") }
     var harga by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Ambil data jika itemId ada
+    LaunchedEffect(itemId) {
+        if (itemId != null) {
+            val item = viewModel.getCitaCita(itemId)
+            item?.let {
+                nama = it.nama
+                harga = it.harga
+                imageUri = it.gambarUri
+            }
+        }
+    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -32,26 +49,32 @@ fun FormInputScreen(viewModel: SavingViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Tambah Tabungan", fontWeight = FontWeight.Bold)
+        Text(
+            if (itemId != null) "Edit Tabungan" else "Tambah Tabungan",
+            fontWeight = FontWeight.Bold
+        )
 
         Button(
             onClick = {
                 if (nama.isNotBlank() && harga.isNotBlank()) {
                     val item = CitaCita(
+                        id = itemId ?: 0, // id 0 untuk item baru
                         nama = nama,
                         harga = harga,
-                        gambarUri = imageUri)
-                    viewModel.tambahData(item)
+                        gambarUri = imageUri
+                    )
+                    viewModel.tambahData(item) // tetap gunakan insert(REPLACE)
 
-                    // Reset form setelah simpan
+                    // Reset form dan kembali
                     nama = ""
                     harga = ""
                     imageUri = null
+                    navController.navigate("saving")
                 }
             },
             modifier = Modifier.align(Alignment.End)
         ) {
-            Text("Simpan")
+            Text(if (itemId != null) "Update" else "Simpan")
         }
 
         TextField(
@@ -83,4 +106,5 @@ fun FormInputScreen(viewModel: SavingViewModel) {
         }
     }
 }
+
 

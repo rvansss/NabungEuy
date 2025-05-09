@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy.screen
+package com.evan0107.nabungeuy.saving
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 
 class SavingViewModel(dao: CitaCitaDao) : ViewModel() {
-    val listData: StateFlow<List<CitaCita>> = dao.getCitaCita()
+    val listData: StateFlow<List<CitaCita>> = dao.getAllCitaCita()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -38,6 +38,22 @@ class SavingViewModel(dao: CitaCitaDao) : ViewModel() {
         viewModelScope.launch {
             citaCitaDao.insert(item)
         }
+    }
+
+    fun updateData(item: CitaCita) {
+        viewModelScope.launch {
+            citaCitaDao.update(item)
+        }
+    }
+
+    fun hapusData(item: CitaCita) {
+        viewModelScope.launch {
+            citaCitaDao.delete(item)
+        }
+    }
+
+    suspend fun getCitaCita(id: Int): CitaCita? {
+        return citaCitaDao.getById(id)
     }
 
 }

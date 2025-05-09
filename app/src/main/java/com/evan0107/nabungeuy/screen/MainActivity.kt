@@ -45,6 +45,10 @@ import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
 import com.evan0107.nabungeuy.database.CitaCitaDb
+import com.evan0107.nabungeuy.saving.DetailScreen
+import com.evan0107.nabungeuy.saving.FormInputScreen
+import com.evan0107.nabungeuy.saving.SavingScreen
+import com.evan0107.nabungeuy.saving.SavingViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -245,29 +249,30 @@ fun AppNavigation(
                 SavingScreen(navController, viewModel)
             }
             composable("form_input") {
-                FormInputScreen(viewModel)
+                FormInputScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    itemId = null
+                )
             }
+
             composable("detail_screen") {
-                DetailScreen(viewModel = viewModel)
+                DetailScreen(
+                    viewModel = viewModel,
+                    navController = navController
+                    )
+            }
+            composable("form_input/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                FormInputScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    itemId = id
+                )
             }
 
         }
     }
 
 
-
-
-//    @Preview(showBackground = true)
-//    @Composable
-//    fun TopBarPreview() {
-//        // Gunakan remember agar bisa di-toggle di Compose Preview interaktif (kalau enabled)
-//        val isDarkMode = remember { mutableStateOf(false) }
-//
-//        NabungEuyTheme {
-//            TopBar(
-//                isDarkMode = isDarkMode.value,
-//                onToggleTheme = { isDarkMode.value = !isDarkMode.value }
-//            )
-//        }
-//    }
 }

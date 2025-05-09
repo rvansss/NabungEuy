@@ -10,11 +10,15 @@ interface CitaCitaDao {
     suspend fun insert(citaCita: CitaCita)
 
     @Query("SELECT * FROM CitaCita")
-    fun getCitaCita(): Flow<List<CitaCita>>
+    fun getAllCitaCita(): Flow<List<CitaCita>>
 
     @Query("SELECT * FROM CitaCita WHERE id = :id")
     suspend fun getById(id: Int): CitaCita?
 
     @Delete
     suspend fun delete(citaCita: CitaCita)
+
+    @Update
+    suspend fun update(citaCita: CitaCita)
+
 }

@@ -1,4 +1,4 @@
-package com.evan0107.nabungeuy.screen
+package com.evan0107.nabungeuy.saving
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +36,8 @@ import androidx.compose.runtime.getValue
 import coil.compose.rememberAsyncImagePainter
 import com.evan0107.nabungeuy.R
 
-
+// Kode SavingScreen tetap sama karena viewModel.listData sudah menangani konversi
+// gambarPath ke gambarUri di SavingViewModel yang diperbarui
 @Composable
 fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
     val citaCitaList by viewModel.listData.collectAsState()
@@ -44,7 +45,7 @@ fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(24.dp)) {
             Text(
-                text = "Van’s Cita-cita",
+                text = "Van's Cita-cita",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -108,4 +109,3 @@ fun SavingScreen(navController: NavController, viewModel: SavingViewModel) {
         }
     }
 }
-
