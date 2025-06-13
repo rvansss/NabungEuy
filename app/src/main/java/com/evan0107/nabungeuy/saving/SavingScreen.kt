@@ -39,15 +39,14 @@ import com.evan0107.nabungeuy.network.ApiStatus
 import com.evan0107.nabungeuy.network.HobiApi
 
 
-
 @Composable
 fun SavingScreen(
     modifier:Modifier   = Modifier,
     navController: NavController
-        ) {
+) {
     val viewModel: SavingViewModel = viewModel()
-    val data by viewModel.data
-    val status by viewModel.status.collectAsState()
+    val data by viewModel.data // Menggunakan by delegate untuk State<List<HobiItem>>
+    val status by viewModel.status.collectAsState() // Menggunakan collectAsState untuk StateFlow
 
     when (status) {
         ApiStatus.LOADING -> {
@@ -59,9 +58,16 @@ fun SavingScreen(
             }
         }
         ApiStatus.SUCCESS -> {
-
+            // Pindahkan LazyVerticalGrid ke dalam blok SUCCESS
+            LazyVerticalGrid(
+                modifier = modifier.fillMaxSize().padding(4.dp),
+                columns = GridCells.Fixed(2),
+            ) {
+                items(data) { hobiItem -> // hobiItem di sini adalah HobiItem
+                    ListItem(hobiItem = hobiItem)
+                }
+            }
         }
-
         ApiStatus.FAILED -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -70,7 +76,7 @@ fun SavingScreen(
             ) {
                 Text(text = stringResource(id = R.string.error))
                 Button(
-                    onClick = {viewModel.retrieveData() },
+                    onClick = { viewModel.retrieveData() }, // Panggil ulang untuk mencoba lagi
                     modifier = Modifier.padding(top = 16.dp),
                     contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
                 ) {
@@ -78,14 +84,6 @@ fun SavingScreen(
                 }
             }
         }
-    }
-
-
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize().padding(4.dp),
-        columns = GridCells.Fixed(2),
-    ) {
-        items(data) { ListItem(hobiItem = it) }
     }
 }
 
@@ -95,9 +93,12 @@ fun ListItem(hobiItem: HobiItem) {
         modifier = Modifier.padding(4.dp).border(1.dp, Color.Gray),
         contentAlignment = Alignment.BottomCenter
     ) {
+
+        val fullImageUrl = HobiApi.getHobiItemImageUrl(hobiItem.imageUrl)
+
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(HobiApi.getHobiItemUrl(hobiItem.image_url))
+                .data(fullImageUrl)
                 .crossfade(true)
                 .build(),
             contentDescription = stringResource(R.string.gambar, hobiItem.name),
@@ -107,7 +108,9 @@ fun ListItem(hobiItem: HobiItem) {
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         )
         Column (
-            modifier = Modifier.fillMaxWidth().padding(4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp)
                 .background(Color(red = 0f, green = 0f, blue = 0f, alpha = 0.5f))
                 .padding(4.dp)
         ){
@@ -121,14 +124,12 @@ fun ListItem(hobiItem: HobiItem) {
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-//            Text(
-//                text = hobiItem.price,
-//                fontWeight = FontStyle.Italic,
-//                fontSize = 14.sp,
-//                color = Color.White
-//
-//            )
-
+            Text(
+                text = hobiItem.price,
+                fontStyle = FontStyle.Italic,
+                fontSize = 14.sp,
+                color = Color.White
+            )
         }
     }
 }
