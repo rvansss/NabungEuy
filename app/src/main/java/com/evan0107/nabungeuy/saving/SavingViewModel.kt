@@ -1,59 +1,30 @@
 package com.evan0107.nabungeuy.saving
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.evan0107.nabungeuy.database.CitaCitaDao
-import com.evan0107.nabungeuy.model.CitaCita
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import com.evan0107.nabungeuy.network.HobiApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class SavingViewModel(dao: CitaCitaDao) : ViewModel() {
-    val listData: StateFlow<List<CitaCita>> = dao.getAllCitaCita()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+class SavingViewModel : ViewModel() {
 
-    private val citaCitaDao = dao // simpan sebagai field opsional
-
-    var selectedItem by mutableStateOf<CitaCita?>(null)
-    private set
-
-//    fun getCitaCita(id: Int): CitaCita? {
-//        return listData.value.find { it.id == id }
-//    }
-
-    fun pilihItem(item: CitaCita) {
-        selectedItem = item
+    init {
+        retrieveData()
     }
 
-    fun tambahData(item: CitaCita) {
-        viewModelScope.launch {
-            citaCitaDao.insert(item)
+    private fun retrieveData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val result = HobiApi.service.getHobiItems()
+                Log.d("SavingViewModel", "Success: $result")
+            } catch (e: Exception) {
+                Log.d("SavingViewModel", "Failure: ${e.message}")
+            }
         }
     }
-
-    fun updateData(item: CitaCita) {
-        viewModelScope.launch {
-            citaCitaDao.update(item)
-        }
-    }
-
-    fun hapusData(item: CitaCita) {
-        viewModelScope.launch {
-            citaCitaDao.delete(item)
-        }
-    }
-
-    suspend fun getCitaCita(id: Int): CitaCita? {
-        return citaCitaDao.getById(id)
-    }
-
 }
+
+
+

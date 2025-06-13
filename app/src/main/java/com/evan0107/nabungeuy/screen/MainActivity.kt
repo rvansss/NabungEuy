@@ -1,6 +1,6 @@
 package com.evan0107.nabungeuy.screen
 
-import SavingViewModelFactory
+//import SavingViewModelFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,8 +51,8 @@ import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
 import com.evan0107.nabungeuy.database.CitaCitaDb
-import com.evan0107.nabungeuy.saving.DetailScreen
-import com.evan0107.nabungeuy.saving.FormInputScreen
+//import com.evan0107.nabungeuy.saving.DetailScreen
+//import com.evan0107.nabungeuy.saving.FormInputScreen
 import com.evan0107.nabungeuy.saving.SavingScreen
 import com.evan0107.nabungeuy.saving.SavingViewModel
 import com.evan0107.nabungeuy.ui.theme.AppTheme
@@ -66,9 +66,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val db = CitaCitaDb.getInstance(applicationContext)
-            val viewModel: SavingViewModel by viewModels {
-                SavingViewModelFactory(db.dao)
-            }
+//            val viewModel: SavingViewModel by viewModels {
+//                SavingViewModelFactory(db.dao)
+//            }
 
             var currentTheme by remember { mutableStateOf(AppTheme.LIGHT) }
 
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 AppNavigation(
                     currentTheme = currentTheme,
                     onThemeChange = { currentTheme = it },
-                    viewModel = viewModel
+                    viewModel = SavingViewModel()
                 )
             }
         }
@@ -274,30 +274,30 @@ fun AppNavigation(
                 ProfileScreen()
             }
             composable("saving") {
-                SavingScreen(navController, viewModel)
+                SavingScreen(navController, java.lang.reflect.Modifier())
             }
-            composable("form_input") {
-                FormInputScreen(
-                    navController = navController,
-                    viewModel = viewModel,
-                    itemId = null
-                )
-            }
-
-            composable("detail_screen") {
-                DetailScreen(
-                    viewModel = viewModel,
-                    navController = navController
-                    )
-            }
-            composable("form_input/{id}") { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-                FormInputScreen(
-                    navController = navController,
-                    viewModel = viewModel,
-                    itemId = id
-                )
-            }
+//            composable("form_input") {
+//                FormInputScreen(
+//                    navController = navController,
+//                    viewModel = viewModel,
+//                    itemId = null
+//                )
+//            }
+//
+//            composable("detail_screen") {
+//                DetailScreen(
+//                    viewModel = viewModel,
+//                    navController = navController
+//                    )
+//            }
+//            composable("form_input/{id}") { backStackEntry ->
+//                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+//                FormInputScreen(
+//                    navController = navController,
+//                    viewModel = viewModel,
+//                    itemId = id
+//                )
+//            }
 
         }
     }
