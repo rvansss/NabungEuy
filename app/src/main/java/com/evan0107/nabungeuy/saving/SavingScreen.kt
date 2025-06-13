@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.evan0107.nabungeuy.R
 import com.evan0107.nabungeuy.model.HobiItem
+import com.evan0107.nabungeuy.network.ApiStatus
 import com.evan0107.nabungeuy.network.HobiApi
 
 
@@ -38,10 +41,25 @@ import com.evan0107.nabungeuy.network.HobiApi
 fun SavingScreen(
     modifier:Modifier   = Modifier,
     navController: NavController
-
-) {
+        ) {
     val viewModel: SavingViewModel = viewModel()
     val data by viewModel.data
+    val status by viewModel.status.collectAsState()
+
+    when (status) {
+        ApiStatus.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        ApiStatus.SUCCESS -> {
+
+        }
+    }
+
 
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize().padding(4.dp),

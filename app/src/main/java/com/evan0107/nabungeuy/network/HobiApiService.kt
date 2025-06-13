@@ -30,3 +30,5 @@ private const val BASE_URL = "https://hobi-api.bagasaldianata.my.id/api/"
             return "$BASE_URL$imageId.jpg"
         }
     }
+
+    enum class ApiStatus {LOADING,SUCCESS}
