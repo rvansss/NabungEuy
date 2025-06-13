@@ -31,4 +31,4 @@ private const val BASE_URL = "https://hobi-api.bagasaldianata.my.id/api/"
         }
     }
 
-    enum class ApiStatus {LOADING,SUCCESS}
+    enum class ApiStatus {LOADING,SUCCESS,FAILED}
