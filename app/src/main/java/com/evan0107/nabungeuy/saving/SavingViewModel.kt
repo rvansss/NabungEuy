@@ -17,7 +17,7 @@ class SavingViewModel : ViewModel() {
     private fun retrieveData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = HobiApi.service.getHobiItems()
+                val result = HobiApi.service.getHobiItem()
                 Log.d("SavingViewModel", "Success: $result")
             } catch (e: Exception) {
                 Log.d("SavingViewModel", "Failure: ${e.message}")

@@ -57,7 +57,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.retrofit)
-    implementation(libs.converter.scalars)
+    implementation(libs.converter.moshi)
+    implementation(libs.moshi.kotlin)
 
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
