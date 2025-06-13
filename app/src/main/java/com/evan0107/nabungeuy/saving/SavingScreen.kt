@@ -65,6 +65,7 @@ fun ListItem(hobiItem: HobiItem) {
             contentDescription = stringResource(R.string.gambar, hobiItem.name),
             contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.loading_img),
+            error = painterResource(id = R.drawable.broken_img),
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         )
         Column (
