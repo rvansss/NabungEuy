@@ -50,7 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import com.evan0107.nabungeuy.ui.theme.NabungEuyTheme
 import java.text.NumberFormat
 import java.util.Locale
-import com.evan0107.nabungeuy.database.CitaCitaDb
+//import com.evan0107.nabungeuy.database.CitaCitaDb
 //import com.evan0107.nabungeuy.saving.DetailScreen
 //import com.evan0107.nabungeuy.saving.FormInputScreen
 import com.evan0107.nabungeuy.saving.SavingScreen
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val db = CitaCitaDb.getInstance(applicationContext)
+//            val db = CitaCitaDb.getInstance(applicationContext)
 //            val viewModel: SavingViewModel by viewModels {
 //                SavingViewModelFactory(db.dao)
 //            }
@@ -274,7 +274,7 @@ fun AppNavigation(
                 ProfileScreen()
             }
             composable("saving") {
-                SavingScreen(navController, java.lang.reflect.Modifier())
+                SavingScreen(navController = navController )
             }
 //            composable("form_input") {
 //                FormInputScreen(
