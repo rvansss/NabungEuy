@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,12 +29,16 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import com.evan0107.nabungeuy.model.User
+import com.evan0107.nabungeuy.network.UserDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
 
     val context = LocalContext.current
+    val dataStore = UserDataStore(context)
+    val user by dataStore.userFlow.collectAsState(User())
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -42,9 +48,12 @@ fun ProfileScreen() {
                 title = { Text("Profil") },
                 actions = {
                     IconButton(onClick = {
-                        // Saat icon diklik, panggil fungsi signIn
+                        if (user.email.isEmpty()) {
                         coroutineScope.launch {
-                            signIn(context)
+                            signIn(context, dataStore)}
+                        }
+                        else {
+                            Log.d("SIGN-IN", "User: $user")
                         }
                     }) {
                         Icon(
@@ -113,7 +122,7 @@ fun ProfileScreen() {
 }
 
 
-private suspend fun signIn(context: Context) {
+private suspend fun signIn(context: Context, dataStore: UserDataStore) {
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setServerClientId(BuildConfig.API_KEY)
@@ -126,19 +135,25 @@ private suspend fun signIn(context: Context) {
     try {
         val credentialManager = CredentialManager.create(context)
         val result = credentialManager.getCredential(context, request)
-        handleSignIn(result)
+        handleSignIn(result, dataStore)
     } catch (e: GetCredentialException) {
         Log.e("SIGN-IN", "Error: ${e.errorMessage}")
     }
 }
 
-private fun handleSignIn(result: GetCredentialResponse) {
+private suspend fun handleSignIn(
+    result: GetCredentialResponse,
+    dataStore: UserDataStore
+    ) {
     val credential = result.credential
     if (credential is CustomCredential &&
         credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
         try {
             val googleId = GoogleIdTokenCredential.createFrom(credential.data)
-            Log.d("SIGN-IN", "User email: ${googleId.id}")
+            val nama = googleId.displayName ?: ""
+            val email = googleId.id
+            val photoUrl = googleId.profilePictureUri.toString()
+            dataStore.saveData(User(nama, email, photoUrl))
         } catch (e: GoogleIdTokenParsingException) {
             Log.e("SIGN-IN", "Error: ${e.message}")
         }
