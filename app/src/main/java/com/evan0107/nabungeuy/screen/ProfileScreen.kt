@@ -36,7 +36,6 @@ import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.exceptions.ClearCredentialException
 import com.evan0107.nabungeuy.model.User
 import com.evan0107.nabungeuy.network.UserDataStore
-import androidx.compose.foundation.BorderStroke // Import BorderStroke untuk OutlinedButton
 import androidx.compose.ui.res.stringResource
 import com.evan0107.nabungeuy.saving.ProfilDialog
 
@@ -48,7 +47,8 @@ fun ProfileScreen() {
     val dataStore = UserDataStore(context)
     val user by dataStore.userFlow.collectAsState(User())
 
-    var showDialog by remember { mutableStateOf(false) } // State untuk mengontrol visibilitas dialog
+    var showDialog by remember { mutableStateOf(false) }
+
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -59,22 +59,22 @@ fun ProfileScreen() {
                 actions = {
                     IconButton(onClick = {
                         if (user.email.isEmpty()) {
-                            // Jika belum login, lakukan Sign In
+
                             coroutineScope.launch {
                                 signIn(context, dataStore)
                             }
                         } else {
-                            // Jika sudah login, tampilkan dialog konfirmasi logout
+
                             showDialog = true
                         }
                     }) {
-                        // Ubah ikon berdasarkan status login
-                        val iconRes = if (user.email.isEmpty()) R.drawable.account_circle_24 else R.drawable.logout_24 // Asumsi ada ic_logout drawable
+
+                        val iconRes = if (user.email.isEmpty()) R.drawable.account_circle_24 else R.drawable.logout_24
                         val tintColor = if (user.email.isEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
 
                         Icon(
                             painter = painterResource(iconRes),
-                            contentDescription = stringResource(R.string.profil), // Konten deskripsi tetap sama
+                            contentDescription = stringResource(R.string.profil),
                             tint = tintColor
                         )
                     }
@@ -85,16 +85,14 @@ fun ProfileScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Terapkan padding dari Scaffold
-                .padding(24.dp), // Padding tambahan untuk konten
+                .padding(paddingValues)
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Gambar profil
+
             Image(
-                // Menggunakan placeholder untuk foto profil. Jika Anda ingin memuat dari URL, gunakan Coil/Glide.
-                // Contoh dengan Coil (pastikan Anda telah menambahkan dependency coil-compose):
-                // painter = rememberAsyncImagePainter(model = user.photoUrl),
+
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "Foto Profil",
                 modifier = Modifier
@@ -104,14 +102,14 @@ fun ProfileScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Nama Pengguna
+
             Text(
                 text = if (user.name.isNotEmpty()) user.name else "Evansius Rafael S",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
 
-            // Email Pengguna (tampilkan jika ada)
+
             if (user.email.isNotEmpty()) {
                 Text(
                     text = user.email,
@@ -146,40 +144,18 @@ fun ProfileScreen() {
                     modifier = Modifier.padding(12.dp)
                 )
             }
-            // Tombol Log Out (Hanya tampilkan jika pengguna sudah login dan jika Anda ingin tombol terpisah dari icon di TopAppBar)
-            // Jika Anda hanya ingin logout via icon TopAppBar, Anda bisa menghapus bagian ini.
-            /*
-            if (user.email.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(24.dp))
-                OutlinedButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            signOut(context, dataStore)
-                        }
-                    },
-                    modifier = Modifier.padding(8.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-                ) {
-                    Text(
-                        text = stringResource(R.string.logout),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-            */
         }
     }
 
-    // Bagian Dialog diletakkan di sini, setelah Scaffold
     if (showDialog) {
         ProfilDialog(
-            user = user, // Teruskan data user ke dialog
-            onDismissRequest = { showDialog = false }, // Ketika dialog diminta tutup
-            onConfirmation = { // Ketika tombol konfirmasi di dialog diklik
+            user = user,
+            onDismissRequest = { showDialog = false },
+            onConfirmation = {
                 coroutineScope.launch {
                     signOut(context, dataStore)
                 }
-                showDialog = false // Tutup dialog setelah aksi
+                showDialog = false
             }
         )
     }
@@ -240,29 +216,3 @@ private suspend fun signOut(context: Context, dataStore: UserDataStore) {
     }
 }
 
-// Pastikan Anda memiliki definisi ProfilDialog di file yang sama atau import jika di file lain
-// Contoh sederhana ProfilDialog (Anda mungkin perlu mengisi kontennya sesuai desain Anda)
-/*
-@Composable
-fun ProfilDialog(
-    user: User,
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text("Konfirmasi Logout") },
-        text = { Text("Anda yakin ingin logout dari akun ${user.email}?") },
-        confirmButton = {
-            Button(onClick = onConfirmation) {
-                Text(stringResource(R.string.logout)) // Asumsi R.string.logout ada
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(stringResource(R.string.tutup)) // Asumsi R.string.tutup ada
-            }
-        }
-    )
-}
-*/

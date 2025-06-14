@@ -74,7 +74,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.androidx.datastore.preferences)
-
+    implementation(libs.android.image.cropper)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
